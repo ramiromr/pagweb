@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Planificador Diario · Gantt por Horas</title>
+  <meta name="description" content="Calendario con diagrama de Gantt por horas para seguimiento de actividades programadas y ejecutadas durante el día." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-header">
+      <span class="logo-icon">◈</span>
+      <h1 class="logo-text">DayFlow</h1>
+    </div>
+
+    <!-- Mini Calendar -->
+    <div class="mini-calendar">
+      <div class="cal-nav">
+        <button id="prevMonth" class="cal-btn" title="Mes anterior">‹</button>
+        <span id="calMonthYear" class="cal-title"></span>
+        <button id="nextMonth" class="cal-btn" title="Mes siguiente">›</button>
+      </div>
+      <div class="cal-weekdays">
+        <span>Lu</span><span>Ma</span><span>Mi</span><span>Ju</span>
+        <span>Vi</span><span>Sa</span><span>Do</span>
+      </div>
+      <div class="cal-days" id="calDays"></div>
+    </div>
+
+    <!-- Legend -->
+    <div class="legend">
+      <p class="legend-title">Leyenda</p>
+      <div class="legend-item">
+        <span class="legend-dot planned"></span>
+        <span>Programada</span>
+      </div>
+      <div class="legend-item">
+        <span class="legend-dot executed"></span>
+        <span>Ejecutada</span>
+      </div>
+      <div class="legend-item">
+        <span class="legend-dot partial"></span>
+        <span>Parcial</span>
+      </div>
+    </div>
+
+    <!-- Stats -->
+    <div class="stats-panel">
+      <p class="legend-title">Resumen del día</p>
+      <div class="stat-row">
+        <span class="stat-label">Programadas</span>
+        <span class="stat-val" id="statPlanned">0</span>
+      </div>
+      <div class="stat-row">
+        <span class="stat-label">Ejecutadas</span>
+        <span class="stat-val" id="statExecuted">0</span>
+      </div>
+      <div class="stat-row">
+        <span class="stat-label">Cumplimiento</span>
+        <span class="stat-val" id="statPercent">—</span>
+      </div>
+      <div class="progress-bar">
+        <div class="progress-fill" id="progressFill"></div>
+      </div>
+    </div>
+
+    <button class="add-btn" id="openModalBtn">
+      <span>＋</span> Nueva actividad
+    </button>
+  </aside>
+
+  <!-- MAIN -->
+  <main class="main">
+    <!-- Top bar -->
+    <header class="topbar">
+      <div class="topbar-left">
+        <button class="menu-toggle" id="menuToggle" title="Menú">☰</button>
+        <div>
+          <h2 class="topbar-date" id="topbarDate"></h2>
+          <p class="topbar-sub" id="topbarSub"></p>
+        </div>
+      </div>
+      <div class="topbar-right">
+        <button class="today-btn" id="todayBtn">Hoy</button>
+      </div>
+    </header>
+
+    <!-- Gantt -->
+    <div class="gantt-wrapper">
+      <div class="gantt-container" id="ganttContainer">
+        <!-- Time ruler -->
+        <div class="time-ruler" id="timeRuler"></div>
+        <!-- Rows -->
+        <div class="gantt-rows" id="ganttRows"></div>
+        <!-- Current time line -->
+        <div class="now-line" id="nowLine" style="display:none;"></div>
+      </div>
+    </div>
+  </main>
+
+  <!-- MODAL -->
+  <div class="modal-overlay" id="modalOverlay">
+    <div class="modal" id="modal">
+      <div class="modal-header">
+        <h3 class="modal-title" id="modalTitle">Nueva actividad</h3>
+        <button class="modal-close" id="closeModalBtn">✕</button>
+      </div>
+      <form id="activityForm" autocomplete="off">
+        <input type="hidden" id="editId" />
+
+        <div class="form-group">
+          <label for="actName">Nombre de la actividad</label>
+          <input type="text" id="actName" placeholder="Ej: Reunión de equipo" required />
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label for="actStart">Inicio</label>
+            <input type="time" id="actStart" required />
+          </div>
+          <div class="form-group">
+            <label for="actEnd">Fin</label>
+            <input type="time" id="actEnd" required />
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="actStatus">Estado</label>
+          <div class="status-selector" id="statusSelector">
+            <button type="button" class="status-opt active" data-val="planned">Programada</button>
+            <button type="button" class="status-opt" data-val="executed">Ejecutada</button>
+            <button type="button" class="status-opt" data-val="partial">Parcial</button>
+          </div>
+          <input type="hidden" id="actStatus" value="planned" />
+        </div>
+
+        <div class="form-group">
+          <label for="actNote">Nota (opcional)</label>
+          <input type="text" id="actNote" placeholder="Comentario breve..." />
+        </div>
+
+        <div class="form-actions">
+          <button type="button" class="btn-danger" id="deleteActBtn" style="display:none;">Eliminar</button>
+          <div class="form-actions-right">
+            <button type="button" class="btn-secondary" id="cancelModalBtn">Cancelar</button>
+            <button type="submit" class="btn-primary" id="saveActBtn">Guardar</button>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
